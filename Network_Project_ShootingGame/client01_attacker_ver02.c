@@ -51,20 +51,20 @@ int main(void) {
 				gotoXY(attacker_X, attacker_Y);
 				printf("*");
 			}
-			else if (key == 32) {				// spacebar - (ASCII) DEC: 32
+			if (key == 32) {				// spacebar - (ASCII) DEC: 32
 				bx = attacker_X;
 				by = attacker_Y - 1;
 				bullet = 1;
+
 			}
-			else {}
 		}
 		while (bullet) {
-			gotoXY(bx, by+1);
-			printf(" ");
 			gotoXY(bx, by);
 			printf("!");
 			by--;
-			sleep(100);
+			gotoXY(bx, by + 1);
+			printf(" ");
+			Sleep(100);
 			if (by < 0) bullet = 0;
 		}
 	}
