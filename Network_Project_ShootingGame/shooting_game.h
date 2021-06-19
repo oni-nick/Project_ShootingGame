@@ -7,3 +7,4 @@ void gotoXY(int x, int y) {
 	pos.Y = y;
 	SetConsoleCursorPosition(GetStdHandle(STD_OUTPUT_HANDLE), pos);
 }
+

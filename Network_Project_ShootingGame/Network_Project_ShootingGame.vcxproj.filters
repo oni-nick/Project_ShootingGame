@@ -24,6 +24,9 @@
     <ClCompile Include="Client01_Defencer.c">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="client01_attacker_ver03.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="shooting_game.h">
@@ -31,6 +34,9 @@
     </ClInclude>
     <ClInclude Include="console.h">
       <Filter>Source Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Queue.h">
+      <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

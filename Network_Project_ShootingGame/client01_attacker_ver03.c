@@ -1,8 +1,6 @@
 /*
-총알 1개 출력은 정상동작, 다만 총알 이동 중에는 비행기 움직임 X. 
-원인: 총알 출력을 while()문 안에서 실행하므로, 끝날때까지는 키 입력에 따른 비행기 출력이 지연
-해결: whiile()안에 또 while()을 쓸 이유가 없음. if()로 바꾼다음, if(kbhit()) 다음으로 넘김.
-스레드로 실행흐름을 분기해보자. (ver03)
+* 0620 - am 1:10
+스레드 생성해서 총알 찍는 함수, 매개변수 전달... 잘 안됨. 
 */
 
 # include <stdio.h>
@@ -10,14 +8,20 @@
 // # include <shooting_game.h>
 
 void gotoXY(int x, int y);
-void ClearBuffer(void);
+unsigned WINAPI BulletThread(void* arg);
+
+typedef struct bullet {
+	int bx;
+	int by;
+	int is_bullet;
+} bullet;
 
 int main(void) {
 
 	int attacker_X = 60, attacker_Y = 20;
 	int bx = 0, by = 0;
-	int bullet = 0;
-
+	int is_bullet = 0;
+	bullet blt; // 총알 위치 저장할 구조체, 스레드 함수에 넘겨줄 매개변수
 	// 1. 콘솔 창 크기 지정
 	system("mode con cols=80 lines=40");
 	gotoXY(attacker_X, attacker_Y);
@@ -61,23 +65,15 @@ int main(void) {
 			if (key == 32) {				// spacebar - (ASCII) DEC: 32
 				bx = attacker_X;
 				by = attacker_Y - 2;
-				bullet = 1;
-
+				is_bullet = 1;
+				blt.bx = bx;
+				blt.by = by;
+				blt.is_bullet = is_bullet;
 			}
 		} // if(kbhit() != 0)
-		if (bullet) {
-			gotoXY(bx, by + 1);
-			printf("  ");
-			gotoXY(bx, by);
-			printf("|");
-			by--;
-			Sleep(100);
-			if (by < 0) {
-				bullet = 0;
-				gotoXY(bx, 0); // (bx, by); by는 -1이니까 안지워지지, 0으로해야지 
-				printf("  ");
-			}
-
+		if (is_bullet) {
+			Sleep(500);
+			_beginthreadex(NULL, 0, BulletThread, (void*)&blt, 0, 0);
 		}
 	} // while(1)
 	return 0;
@@ -91,6 +87,23 @@ void gotoXY(int x, int y) {
 	SetConsoleCursorPosition(GetStdHandle(STD_OUTPUT_HANDLE), pos);
 }
 
-void ClearBuffer(void) {
-	while (getchar() != ' ');
+
+unsigned WINAPI BulletThread(void* arg) {
+	bullet blt = *(bullet*)arg;
+	if (blt.is_bullet) {
+		gotoXY(blt.bx, blt.by + 1);
+		printf(" ");
+		gotoXY(blt.bx, blt.by);
+		printf("|");
+		blt.by --;
+		Sleep(100);
+		if (blt.by < 0) {
+			blt.is_bullet = 0;
+			gotoXY(blt.bx, 0); // (bx, by); by는 -1이니까 안지워지지, 0으로해야지 
+			printf(" ");
+			return 0;
+		}
+		return 0;
+	}
+
 }
