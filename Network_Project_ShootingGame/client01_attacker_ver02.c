@@ -3,7 +3,7 @@
 // # include <shooting_game.h>
 
 void gotoXY(int x, int y);
-
+void ClearBuffer(void);
 
 int main(void) {
 
@@ -14,7 +14,7 @@ int main(void) {
 	// 1. 콘솔 창 크기 지정
 	system("mode con cols=80 lines=40");
 	gotoXY(attacker_X, attacker_Y);
-	printf("*");
+	printf("△");
 
 	// 2. 방향키 입력 처리 
 	while (1) {
@@ -27,47 +27,54 @@ int main(void) {
 				switch (key) {
 				case 72: // up
 					gotoXY(attacker_X, attacker_Y);		// 이 두 라인으로 공격자: 연속 출력 -> 단일 출력
-					printf(" ");							// 잔상 출력 cls로 해결
+					printf("  ");							// 잔상 출력 cls로 해결
 					attacker_Y--;						// (0,0)이 좌상단, 위로 움직이려면 - 연산
 					break;
 				case 75: // left
 					gotoXY(attacker_X, attacker_Y);
-					printf(" ");
+					printf("  ");
 					attacker_X--;
 					break;
 				case 77: //right
 					gotoXY(attacker_X, attacker_Y);
-					printf(" ");
+					printf("  ");
 					attacker_X++;
 					break;
 				case 80: // down
 					gotoXY(attacker_X, attacker_Y);
-					printf(" ");
+					printf("  ");
 					attacker_Y++;
 					break;
 				default:
 					break;
 				}
 				gotoXY(attacker_X, attacker_Y);
-				printf("*");
+				printf("△");
 			}
 			if (key == 32) {				// spacebar - (ASCII) DEC: 32
 				bx = attacker_X;
-				by = attacker_Y - 1;
+				by = attacker_Y - 2;
 				bullet = 1;
 
 			}
-		}
-		while (bullet) {
-			gotoXY(bx, by);
-			printf("!");
-			by--;
-			gotoXY(bx, by + 1);
-			printf(" ");
-			Sleep(100);
-			if (by < 0) bullet = 0;
-		}
-	}
+			while (bullet) {
+				gotoXY(bx, by + 1);
+				printf("  ");
+				gotoXY(bx, by);
+				printf("↑");
+				by--;
+				Sleep(100);
+				if (by < 0) {
+					bullet = 0;
+					gotoXY(bx, 0); // (bx, by); by는 -1이니까 안지워지지, 0으로해야지 
+					printf("  ");
+				}
+				//ClearBuffer();
+			}
+			
+		} // if(kbhit() != 0)
+		
+	} // while(1)
 	return 0;
 }
 
@@ -77,4 +84,8 @@ void gotoXY(int x, int y) {
 	pos.X = x;
 	pos.Y = y;
 	SetConsoleCursorPosition(GetStdHandle(STD_OUTPUT_HANDLE), pos);
+}
+
+void ClearBuffer(void) {
+	while (getchar() != ' ');
 }
